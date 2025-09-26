@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture viewer</title>
+    <link rel="icon" type="image/png" href="app.png">
+    <link rel="stylesheet" href="98.css">
+    <style>
+        /* 98.css styles */
+        body {
+            background-color: #c0c0c0;
+            font-family: 'MS Sans Serif', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .menu-bar {
+            background-color: #c0c0c0;
+            color: white;
+            padding: 2px;
+            display: flex;
+            justify-content: space-evenly;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #fff;
+        }
+        button {
+            background-color: #dcdcdc;
+            color: black;
+            border: 1px solid #c0c0c0;
+            padding: 5px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'MS Sans Serif', sans-serif;
+            border-radius: 2px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        button:hover { background-color: #c3c3c3; }
+        button:active { background-color: #c3c3c3; }
+        button:focus { outline: none; }
+        .image-container {
+            margin-top: 50px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-viewer {
+            max-width: 100%;
+            max-height: 80vh;
+            border: 1px solid #000080;
+            background-color: white;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        input[type="file"] { display: none; }
+        #file-input { display: none; }
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track { background-color: #c0c0c0; }
+        ::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background-color: #555; }
+        .close-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 2px 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .close-btn:hover { background-color: #cc0000; }
+        .image-viewer:focus { border-color: #0000ff; }
+    </style>
+</head>
+<body>
+    <div class="menu-bar">
+        <button onclick="openFile()">Upload</button>
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="stretch()">Stretch</button>
+        <button onclick="fullView()">Full View</button>
+        <button onclick="resetImage()">Reset</button>
+        <button onclick="saveImage()">Save</button>
+        <button onclick="showHelp()">Help</button> <!-- Added Help Button -->
+    </div>
+    <input type="file" id="file-input" accept="image/*" onchange="loadImage(event)" style="display: none;" />
+    
+    <div class="image-container">
+        <img id="image" src="image.png" alt="Image" class="image-viewer"> <!-- Default image added -->
+    </div>
+
+    <script>
+        let imageElement = document.getElementById("image");
+        let zoomLevel = 1;
+
+        function openFile() {
+            document.getElementById('file-input').click(); // Open file dialog
+        }
+
+        function loadImage(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    imageElement.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function zoomIn() {
+            zoomLevel += 0.1;
+            updateZoom();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(0.1, zoomLevel - 0.1); // Prevent zooming out too far
+            updateZoom();
+        }
+
+        function updateZoom() {
+            imageElement.style.transform = `scale(${zoomLevel})`;
+        }
+
+        function stretch() {
+            imageElement.style.width = "100%";
+            imageElement.style.height = "100%";
+            imageElement.style.transform = "none"; // Reset zoom
+        }
+
+        function fullView() {
+            imageElement.style.width = "100%";
+            imageElement.style.height = "100%";
+            imageElement.style.maxHeight = "none";
+            imageElement.style.transform = "none"; // Reset zoom
+        }
+
+        function resetImage() {
+            imageElement.style.width = "auto";
+            imageElement.style.height = "auto";
+            imageElement.style.transform = "scale(1)";
+            zoomLevel = 1;
+        }
+
+        function saveImage() {
+            const link = document.createElement("a");
+            link.href = imageElement.src;
+            link.download = "image.png"; // Default file name
+            link.click();
+        }
+
+        // Function to show Help Information
+        function showHelp() {
+            alert("Help Information:\n\n- Upload: Open file dialog to select an image.\n- Zoom In/Out: Adjust zoom level.\n- Stretch: Stretch image to fit the screen.\n- Full View: Show image in full view mode.\n- Reset: Reset zoom and size.\n- Save: Save the displayed image.");
+        }
+    </script>
+</body>
+</html>
